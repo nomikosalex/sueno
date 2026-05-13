@@ -124,7 +124,8 @@
     /* Hero */
     .hero { position: relative; height: 100vh; min-height: 640px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--navy); }
     .hero-bg { position: absolute; inset: 0; overflow: hidden; }
-    .hero-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+    .hero-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 45%; }
+    @media(max-width:768px) { .hero-bg img { object-position: center 40%; } }
     .hero-overlay { position: absolute; inset: 0; background: linear-gradient(175deg,rgba(10,22,40,.19) 0%,rgba(10,22,40,.52) 55%,rgba(10,22,40,.77) 100%); }
     .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; max-width: 860px; width: 100%; }
     .hero-eyebrow { display: block; font-size: 10.5px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
@@ -350,7 +351,7 @@
 <main id="page-main">
 <section class="hero" id="home">
   <div class="hero-bg" aria-hidden="true">
-    <img src="images/hero.jpg" alt="" fetchpriority="high" decoding="async">
+    <img src="images/hero.jpg" alt="Sueño Tourist Office — luxury chauffeur with Mercedes at sunset in Santorini" fetchpriority="high" decoding="async">
   </div>
   <div class="hero-overlay" aria-hidden="true"></div>
   <div class="hero-content" id="main-content">
