@@ -176,6 +176,12 @@
     .gallery-item-icon { opacity: 0; transform: scale(.7); transition: opacity .35s, transform .35s; }
     .gallery-item:hover .gallery-item-icon { opacity: 1; transform: scale(1); }
 
+    /* Gallery carousel dots (mobile only) */
+    .gallery-carousel-nav { display: none; justify-content: center; margin-top: 28px; }
+    .gallery-dots { display: flex; gap: 8px; align-items: center; }
+    .gallery-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); cursor: pointer; transition: background .25s, transform .25s; border: none; padding: 0; flex-shrink: 0; }
+    .gallery-dot.active { background: var(--gold); transform: scale(1.4); }
+
     /* Lightbox */
     .lightbox { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,.95); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s; }
     .lightbox.open { opacity: 1; pointer-events: auto; }
@@ -292,8 +298,14 @@
       .hero-ctas .btn-gold,.hero-ctas .btn-ghost-white{width:100%;max-width:320px}
       .cookie-banner{padding:16px 20px}
       .wa-float{bottom:20px;right:20px;width:52px;height:52px}
+      /* carousel */
+      .masonry{columns:unset;display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;padding:0 20px 4px;margin:0 -20px;scrollbar-width:none}
+      .masonry::-webkit-scrollbar{display:none}
+      .gallery-item{flex:0 0 80vw;scroll-snap-align:center;margin-bottom:0;break-inside:auto}
+      .gallery-item img{height:260px;width:100%;object-fit:cover}
+      .gallery-carousel-nav{display:flex}
     }
-    @media(max-width:480px)  { .services-grid{grid-template-columns:1fr} .masonry{columns:1} }
+    @media(max-width:480px)  { .services-grid{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
@@ -454,6 +466,9 @@
         <img src="images/hero.jpg" alt="Santorini caldera panorama" loading="lazy">
         <div class="gallery-item-overlay" aria-hidden="true"><div class="gallery-item-icon"><svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round"><circle cx="18" cy="18" r="16"/><path d="M12 18h12M18 12v12"/></svg></div></div>
       </div>
+    </div>
+    <div class="gallery-carousel-nav" id="galleryCarouselNav" aria-hidden="true">
+      <div class="gallery-dots" id="galleryDots"></div>
     </div>
   </div>
 </section>
@@ -715,6 +730,31 @@
     entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.08 });
   revealEls.forEach(function(el) { observer.observe(el); });
+
+  /* ── GALLERY CAROUSEL DOTS (mobile) ── */
+  var galleryGrid = document.getElementById('gallery-grid');
+  var dotsWrap    = document.getElementById('galleryDots');
+  GALLERY.forEach(function(_, i) {
+    var dot = document.createElement('button');
+    dot.className = 'gallery-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Photo ' + (i + 1));
+    dot.addEventListener('click', function() {
+      var items = galleryGrid.querySelectorAll('.gallery-item');
+      items[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+    dotsWrap.appendChild(dot);
+  });
+  galleryGrid.addEventListener('scroll', function() {
+    var items = galleryGrid.querySelectorAll('.gallery-item');
+    var dots  = dotsWrap.querySelectorAll('.gallery-dot');
+    var mid   = galleryGrid.scrollLeft + galleryGrid.offsetWidth / 2;
+    var best  = 0, bestDist = Infinity;
+    items.forEach(function(item, i) {
+      var dist = Math.abs(item.offsetLeft + item.offsetWidth / 2 - mid);
+      if (dist < bestDist) { bestDist = dist; best = i; }
+    });
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === best); });
+  }, { passive: true });
 
   /* ── LIGHTBOX ──────────────────────── */
   var lightbox = document.getElementById('lightbox');
